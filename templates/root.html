@@ -1,0 +1,52 @@
+<html>
+<head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        .hidden {display: none;}
+    </style>
+</head>
+<body>
+    <div id="interactions-container">
+        <div id="dropdown-container">
+            <label for="grouper"> X: </label>
+            <!-- TODO: update the bar chart when the grouper is changed -->
+             <!-- onchange="update_aggregate(this.value, 'grouper')" -->
+            <select name="grouper" onchange="update_aggregate(this.value, 'grouper')">
+                {% for group in groups %}
+                    <option value="{{group}}">{{ group }}</option>
+                {% endfor %}
+            </select>
+            <label for="value"> Y: </label>
+            <!-- TODO: update the bar chart when the value is changed -->
+            <select name="value" onchange="update_aggregate(this.value, 'value')">
+                {% for value in values %}
+                    <option value="{{value}}">{{ value }}</option>
+                {% endfor %}
+            </select>
+            <label for="agg"> Aggregate: </label>
+            <!-- TODO: update the bar chart when the aggregate function is changed -->
+            <select name="agg" onchange="update_aggregate(this.value, 'agg')">
+                {% for agg in aggs %}
+                    <option value="{{agg}}">{{ agg }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div id="plot-container"></div>
+    <div id="filters-container">
+        {% for group in groups %}
+            <label for="{{group}}-filter"> {{ group }} </label>
+            <!-- TODO: update the bar chart and filters when any of the filters are changed -->
+            <select id="{{group}}-filter" name="{{group}}-filter" onchange="update_filter(this.value, '{{ group }}')">
+                <option id='all' value="all">All</option>
+                <!-- originally group_values -->
+                {% for v in group_filters[group] %}
+                    <option id="{{v}}" value="{{v}}">{{ v }}</option>
+                {% endfor %}
+            </select>
+        {% endfor %}
+    </div>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script> 
+</body>
+</html>
