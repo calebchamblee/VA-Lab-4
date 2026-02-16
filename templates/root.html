@@ -38,7 +38,7 @@
             <label for="{{group}}-filter"> {{ group }} </label>
             <!-- TODO: update the bar chart and filters when any of the filters are changed -->
             <select id="{{group}}-filter" name="{{group}}-filter" onchange="update_filter(this.value, '{{ group }}')">
-                <option id='all' value="all">All</option>
+                <option id='all' value="All">All</option>
                 <!-- originally group_values -->
                 {% for v in group_filters[group] %}
                     <option id="{{v}}" value="{{v}}">{{ v }}</option>

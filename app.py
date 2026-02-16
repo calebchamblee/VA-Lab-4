@@ -14,7 +14,7 @@ app.agg = "sum"
 # TODO: define the groups, values, and aggregate functions that the user can select
 groups = ['Country/Region', 'Region', 'State/Province']
 values = ['Quantity', 'Sales', 'Profit']
-aggs = ['sum', 'mean', 'variance', 'count']
+aggs = ['sum', 'mean', 'var', 'count']
 
 
 # TODO: define a function for getting possible filter options for each grouper
@@ -68,8 +68,16 @@ def update_aggregate():
     elif payload['key'] == 'value':
         app.value = payload['value']
 
+    # reset filters and get the latest aggregated data
+    app.filters = {}
+    app.filtered_orders = orders.copy()
     res_dict = get_aggregated_data()
-    return {'data': res_dict[app.value], 'x_column': res_dict[app.grouper]}
+
+    return {
+        'data': res_dict[app.value], 
+        'x_column': res_dict[app.grouper],
+        'group_filters': get_group_filters()
+    }
 
 
 # TODO: Complete the update_filter function
@@ -78,11 +86,8 @@ def update_filter():
     # update the global filter state (app.filters)
     print('inside update_filter')
     payload = request.json
-    print(payload)
     filter_key = payload['key']
     filter_value = payload['value']
-    print('key:', filter_key)
-    print('value:', filter_value)
     if filter_value == 'All':
         if filter_key in app.filters:
             del app.filters[filter_key]

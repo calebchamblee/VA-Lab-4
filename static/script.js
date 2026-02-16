@@ -1,8 +1,10 @@
 // TODO: write the function to update all filter options
-function update_filter_options(group_filters){
+function update_filter_options(group_filters, is_reset = false){
+    console.log('inside update_filter_options');
     for (const [key, valid__values] of Object.entries(group_filters)) {
         let dropdown = document.getElementById(`${key}-filter`);
-        let prevSelection = dropdown.value;
+        let prevSelection = is_reset ? 'All' : dropdown.value;
+        console.log('prevSelection:', prevSelection);
         dropdown.innerHTML = '<option value="All">All</option>'
         valid__values.forEach((val) => {
             let option = document.createElement("option");
@@ -60,7 +62,6 @@ function draw_bar(data, x_column, y_column = []) {
 }
 
 function update_aggregate(value, key) { 
-    console.log('inside update_aggregate');   
     fetch('/update_aggregate', {
         method: 'POST',
         credentials: 'include',
@@ -71,7 +72,9 @@ function update_aggregate(value, key) {
         })
     }).then(async function(response){
         var results = JSON.parse(JSON.stringify((await response.json())))
-        // TODO: extract the necessary data from the results and re-draw the bars
+        // extracts the necessary data from the results and re-draw the bars
+        var cleared_filters = results['group_filters'];
+        update_filter_options(cleared_filters, true);
         var x_column_val = results['x_column'];
         var y_column_val = results['data'];
         draw_bar(y_column_val, x_column_val);
@@ -97,14 +100,5 @@ function update_filter(value, key){
         draw_bar(results['data'][y_col], results['data'][x_col]);
     })
 }
-
-// svg = d3.select("#plot-container")
-//   .append("svg")
-//     .attr("width", width + margin.left + margin.right)
-//     .attr("height", height + margin.top + margin.bottom)
-//     .attr("id", "plot")
-//   .append("g")
-//     .attr("transform",
-//           "translate(" + margin.left + "," + margin.top + ")");
 
 update_aggregate(null, null)
